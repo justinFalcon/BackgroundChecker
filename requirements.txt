@@ -1,3 +1,10 @@
-flask
+Flask
 requests
 gunicorn
+Flask-SQLAlchemy  # If using a database
+Flask-Migrate     # If using migrations
+Flask-WTF         # If using forms
+Flask-Login       # If using user authentication
+Flask-CORS        # If handling CORS
+Flask-Session     # If using server-side sessions
+Flask-Dotenv      # If using environment variables
