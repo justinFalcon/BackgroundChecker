@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Search Results</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f4;
+            margin: 0;
+            padding: 20px;
+        }
+        .container {
+            max-width: 800px;
+            margin: auto;
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+        h2 {
+            text-align: center;
+            color: #333;
+        }
+        .result-box {
+            background: #e8f0fe;
+            padding: 15px;
+            margin-bottom: 10px;
+            border-radius: 8px;
+        }
+        .key {
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <h2>Search Results</h2>
+
+    {% if results %}
+        {% for source, records in results.items() %}
+            <h3>{{ source }} Results</h3>
+            {% if records %}
+                {% for record in records %}
+                <div class="result-box">
+                    {% if record is mapping %}  {# Ensure record is a dictionary #}
+
+                    {% if source == "SEC EDGAR" %}
+                        <p><span class="key">Form Type:</span> {{ record.get('form', 'N/A') }}</p>
+                        <p><span class="key">File Number:</span> {{ record.get('fileNumber', 'N/A') }}</p>
+                        <p><span class="key">Report Date:</span> {{ record.get('reportDate', 'N/A') }}</p>
+                        <p><span class="key">Filing URL:</span> 
+                            {% if record.get('filingUrl') %}
+                                <a href="{{ record['filingUrl'] }}" target="_blank">View Filing</a>
+                            {% else %}
+                                N/A
+                            {% endif %}
+                        </p>
+
+                        {% elif source == "EPA FRS" %}
+                        <p><span class="key">Facility Name:</span> {{ record.get('FacilityName', 'N/A') }}</p>
+                        <p><span class="key">City: </span>{{ record.get('City', 'N/A') }}</p>
+                        <p><span class="key">State: </span>{{ record.get('State', 'N/A') }}</p>
+                        <p><span class="key">Registry ID: </span>{{ record.get('RegistryID', 'N/A') }}</p>
+                        <p><span class="key">EPA Facility Link: </span>
+                            <a href="{{ record.get('FacilityURL', '#') }}" target="_blank">View</a>
+                        </p>
+                    
+
+                    {% else %}
+                        <p><span class="key">Company Name:</span> {{ record.get('attributes', {}).get('entity', {}).get('legalName', {}).get('name', 'N/A') }}</p>
+                        <p><span class="key">LEI:</span> {{ record.get('attributes', {}).get('lei', 'N/A') }}</p>
+                        <p><span class="key">City:</span> {{ record.get('attributes', {}).get('entity', {}).get('legalAddress', {}).get('city', 'N/A') }}</p>
+                        <p><span class="key">Country:</span> {{ record.get('attributes', {}).get('entity', {}).get('legalAddress', {}).get('country', 'N/A') }}</p>
+                        <p><span class="key">Registered As:</span> {{ record.get('attributes', {}).get('entity', {}).get('registeredAs', 'N/A') }}</p>
+                        <p><span class="key">Status:</span> {{ record.get('attributes', {}).get('entity', {}).get('status', 'N/A') }}</p>
+                        <p><span class="key">Registration Date:</span> {{ record.get('attributes', {}).get('registration', {}).get('initialRegistrationDate', 'N/A') }}</p>
+                        <p><span class="key">LEI Record:</span> 
+                            {% if record.get('links', {}).get('self') %}
+                                <a href="{{ record['links']['self'] }}" target="_blank">View Details</a>
+                            {% else %}
+                                N/A
+                            {% endif %}
+                        </p>
+                    {% endif %}
+                    
+                    {% else %}
+                        <p>Unexpected data format</p>
+                    {% endif %}
+                </div>
+                {% endfor %}
+            {% else %}
+                <p>No results found for {{ source }}.</p>
+            {% endif %}
+        {% endfor %}
+    {% else %}
+        <p>No results found.</p>
+    {% endif %}
+</div>
+
+</body>
+</html>
